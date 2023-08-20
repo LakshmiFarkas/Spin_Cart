@@ -46,7 +46,7 @@ span.preValue {
 .spin_container .pointer {
   width: 50px;
   height: 130px;
-  background-image: url(/images/triangle.png);
+  background-image: url(images/triangle.png);
   background-size: cover;
   position: absolute;
   margin-left: 123px;
