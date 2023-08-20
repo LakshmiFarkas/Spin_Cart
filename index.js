@@ -24,21 +24,36 @@ function init() {
       slice.style.backgroundColor = "var(--red)";
     } else slice.style.backgroundColor = "var(--dark)";
 
-    if (count == 2) {
+    if (count == 1) {
       slice.style.width = "100%";
+      slice.style.height = "100%";
+
+      slice.innerHTML +=
+        "<div class='slice_value' style = 'width:40%'><p>" +
+        value +
+        "</p></div>";
+    } else if (count == 2) {
+      slice.style.width = "100%";
+      slice.style.justifyContent = "center";
+
       if (i == 1) slice.style.transform = "translateY(100%)";
-      slice.innerHTML += "<span>" + value + "<span>";
+      slice.innerHTML +=
+        "<div class='slice_value' style = 'width:auto' ><p>" +
+        value +
+        "</p></div>";
     } else {
       slice.style.transform =
         "rotate(calc(" + angle * i + "deg)) skewY(" + (90 - angle) + "deg)";
     }
 
     slice.innerHTML +=
-      '<span style="transform: skewY(' +
+      '<div style="transform: skewY(' +
       -(90 - angle) +
-      'deg)">' +
+      'deg)" class="slice_value" ><p style = "rotate: ' +
+      -25 +
+      'deg">' +
       value +
-      "<span>";
+      "</p></div>";
 
     slices.appendChild(slice);
   }
@@ -80,10 +95,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /*-------- SPIN WHEEL -----------*/
 
+  var rotating = 0;
+
   const spinButton = document.getElementById("spinBtn");
+  let rotationFinished = true;
   spinButton.addEventListener("click", () => {
     const circle = document.getElementsByClassName("circle")[0];
+    const result = document.getElementsByClassName("preValue")[0];
     const randomDegrees = Math.abs(Math.floor(Math.random() * 3600));
-    circle.style.transform = `rotate(${randomDegrees}deg)`;
+    rotating += randomDegrees;
+    rotationFinished = false;
+
+    const slice = document.getElementsByClassName("slice");
+
+    const angle = 360 / rowCount;
+
+    var offsetAngle = rotating % 360;
+
+    if (offsetAngle % angle == 0) {
+      result.innerHTML = "Raw";
+    } else {
+      var cnt = (offsetAngle - (offsetAngle % angle)) / angle;
+      if (cnt != 0) {
+        cnt = rowCount - cnt;
+      }
+      circle.style.transform = `rotate(${rotating}deg)`;
+    }
+    circle.addEventListener("transitionend", () => {
+      rotationFinished = true;
+      result.innerHTML =
+        "Previous Value: " + slice[cnt].childNodes[0].childNodes[0].innerHTML;
+    });
   });
 });
